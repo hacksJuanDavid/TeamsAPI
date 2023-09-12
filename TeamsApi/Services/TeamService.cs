@@ -52,18 +52,18 @@ namespace TeamsApi.Services
             {
                 throw new ArgumentNullException($"Team with Id={id} Not Found");
             }
-            
+
             if (team is null)
             {
                 throw new ArgumentNullException($"Team with Id={id} Not Found");
             }
-            
+
             _appDbContext.Entry(original).CurrentValues.SetValues(team);
             await _appDbContext.SaveChangesAsync();
 
             return team;
         }
-        
+
         // Get /teams/{teamId}/members
         public async Task<List<TeamMember>> GetTeamMembersByTeamId(int id)
         {
@@ -71,6 +71,5 @@ namespace TeamsApi.Services
                 .Where(tm => tm.TeamId == id)
                 .ToListAsync();
         }
-   
     }
 }
