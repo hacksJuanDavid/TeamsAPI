@@ -17,7 +17,7 @@ namespace TeamsApi.Services
         {
             _appDbContext.Set<Team>().Add(team);
             await _appDbContext.SaveChangesAsync();
-            return team; 
+            return team;
         }
 
         public async Task DeleteTeam(int id)
@@ -26,7 +26,7 @@ namespace TeamsApi.Services
 
             if (original is null)
             {
-                throw new Exception($"Team with Id={id} Not Found");
+                throw new ArgumentNullException($"Team with Id={id} Not Found");
             }
 
             _appDbContext.Set<Team>().Remove(original);
@@ -39,24 +39,38 @@ namespace TeamsApi.Services
         }
 
         public async Task<Team?> GetTeamById(int id)
-        {   
+        {
             return await _appDbContext.Set<Team>().FindAsync(id);
         }
 
-        public async Task<Team> UpdateTeam(Team team)
+        public async Task<Team?> UpdateTeam(Team? team)
         {
             var id = team?.Id;
             var original = await _appDbContext.Set<Team>().FindAsync(id);
 
             if (original is null)
             {
-                throw new Exception($"Team with Id={id} Not Found");
+                throw new ArgumentNullException($"Team with Id={id} Not Found");
             }
-
+            
+            if (team is null)
+            {
+                throw new ArgumentNullException($"Team with Id={id} Not Found");
+            }
+            
             _appDbContext.Entry(original).CurrentValues.SetValues(team);
             await _appDbContext.SaveChangesAsync();
 
             return team;
         }
+        
+        // Get /teams/{teamId}/members
+        public async Task<List<TeamMember>> GetTeamMembersByTeamId(int id)
+        {
+            return await _appDbContext.Set<TeamMember>()
+                .Where(tm => tm.TeamId == id)
+                .ToListAsync();
+        }
+   
     }
 }

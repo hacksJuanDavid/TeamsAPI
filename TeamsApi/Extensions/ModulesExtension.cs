@@ -15,18 +15,12 @@ public static class ModulesExtension
 
     public static IServiceCollection AddMapping(this IServiceCollection services)
     {
-
         // Auto Mapper Configurations
-         var mapperConfig = new MapperConfiguration(mc =>
-         {
-             mc.AddProfile(new MappingProfile());
-         });
+        var mapperConfig = new MapperConfiguration(mc => { mc.AddProfile(new MappingProfile()); });
 
         IMapper mapper = mapperConfig.CreateMapper();
         services.AddSingleton(mapper);
 
         return services;
     }
-
-
 }

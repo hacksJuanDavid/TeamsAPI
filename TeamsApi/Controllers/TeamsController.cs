@@ -34,6 +34,12 @@ namespace TeamsApi.Controllers
         public async Task<IActionResult> GetTeamById(int id)
         {
             var team = await _teamService.GetTeamById(id);
+
+            if (team == null)
+            {
+                return NotFound();
+            }
+
             return Ok(_mapper.Map<Team, TeamDto>(team));
         }
 
@@ -57,6 +63,14 @@ namespace TeamsApi.Controllers
         {
             await _teamService.DeleteTeam(id);
             return Ok();
+        }
+        
+        // GET api/<TeamsController>/team/5/members
+        [HttpGet("{id}/members")]
+        public async Task<IActionResult> GetTeamMembersByTeamId(int id)
+        {
+            var teamMembers = await _teamService.GetTeamMembersByTeamId(id);
+            return Ok(_mapper.Map<List<TeamMember>, List<TeamMemberDto>>(teamMembers));
         }
     }
 }

@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using TeamsApi.Context;
 using TeamsApi.Extensions;
 using TeamsApi.Services;
-using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,11 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySQL(builder.Configuration.GetConnectionString("CnnStr")!));
 
-// Add Mvc options
+//Add Mvc options
 builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
-builder.Services.AddControllers().AddJsonOptions(
-    options => { options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve; }
-);
+builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

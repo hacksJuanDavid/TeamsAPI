@@ -3,11 +3,11 @@ using TeamsApi.Dtos;
 
 namespace TeamsApi.Validations;
 
-public class TeamValidator: AbstractValidator<TeamDto>
+public class TeamValidator : AbstractValidator<TeamDto>
 {
     public TeamValidator()
     {
-        RuleFor(m  => m.Name).NotEmpty();
-        RuleFor(m  => m.Coach).NotEmpty();
+        RuleFor(m => m.Name).NotEmpty();
+        RuleFor(m => m.Coach).NotEmpty();
     }
 }

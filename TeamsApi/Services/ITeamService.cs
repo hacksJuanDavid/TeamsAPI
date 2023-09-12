@@ -17,5 +17,8 @@ public interface ITeamService
     Task<Team?> GetTeamById(int id);
 
     // UpdateTeam
-    Task<Team> UpdateTeam(Team team);
+    Task<Team?> UpdateTeam(Team? team);
+    
+    // GetTeamMembersByTeamId
+    Task<List<TeamMember>> GetTeamMembersByTeamId(int id);
 }

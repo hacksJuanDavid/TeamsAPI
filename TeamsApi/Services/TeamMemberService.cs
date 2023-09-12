@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using TeamsApi.Context;
 using TeamsApi.Models;
 
-
 namespace TeamsApi.Services;
 
 public class TeamMemberService : ITeamMemberService
@@ -16,31 +15,18 @@ public class TeamMemberService : ITeamMemberService
 
     public async Task<TeamMember> CreateTeamMember(TeamMember teamMember)
     {
-        // Verifica si el equipo existe
-        var team = await _appDbContext.Teams.FindAsync(teamMember.TeamId);
-        if (team == null)
-        {
-            // Manejar el caso en el que el equipo no existe
-            // Puedes lanzar una excepción o tomar otra acción adecuada.
-            throw new InvalidOperationException("El equipo no existe.");
-        }
-
-        // Asigna el equipo al miembro
-        team.Members.Add(teamMember);
-
-        // Confirma la transacción y guarda los cambios en la base de datos
+        var result = await _appDbContext.Set<TeamMember>().AddAsync(teamMember);
         await _appDbContext.SaveChangesAsync();
-
-        return teamMember;
+        return result.Entity;
     }
-    
+
     public async Task DeleteTeamMember(int id)
     {
         var original = await _appDbContext.Set<TeamMember>().FindAsync(id);
 
         if (original is null)
         {
-            throw new Exception($"TeamMember with Id={id} Not Found");
+            throw new ArgumentNullException($"TeamMember with Id={id} Not Found");
         }
 
         _appDbContext.Set<TeamMember>().Remove(original);
@@ -63,7 +49,7 @@ public class TeamMemberService : ITeamMemberService
 
         if (original is null)
         {
-            throw new Exception($"TeamMember with Id={teamMember.Id} Not Found");
+            throw new ArgumentNullException($"TeamMember with Id={teamMember.Id} Not Found");
         }
 
         _appDbContext.Entry(original).CurrentValues.SetValues(teamMember);
@@ -71,8 +57,18 @@ public class TeamMemberService : ITeamMemberService
         return teamMember;
     }
 
-    public async Task<List<TeamMember>> GetTeamMembersByTeamId(int teamId)
+    // Get /members/{id}/teams
+    public async Task<List<Team>> GetTeamsByMemberId(int id)
     {
-        return await _appDbContext.Set<TeamMember>().Where(tm => tm.TeamId == teamId).ToListAsync();
+        var teamMembers = await _appDbContext.Set<TeamMember>().Where(tm => tm.Id == id).ToListAsync();
+        var teams = new List<Team>();
+
+        foreach (var teamMember in teamMembers)
+        {
+            var team = await _appDbContext.Set<Team>().FindAsync(teamMember.TeamId);
+            if (team != null) teams.Add(team);
+        }
+
+        return teams;
     }
 }

@@ -4,11 +4,9 @@ namespace TeamsApi.Models;
 
 public class Team
 {
-    [Key]
-    public int Id { get; set; }
+    [Key] public int Id { get; set; }
 
-    [Required]
-    public string Name { get; set; } = null!;
+    [Required] public string Name { get; set; } = null!;
 
     public string Coach { get; set; } = null!;
 
