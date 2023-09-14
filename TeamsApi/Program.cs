@@ -2,7 +2,6 @@ using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using TeamsApi.Context;
 using TeamsApi.Extensions;
-using TeamsApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,11 +17,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Adicionar os Servicios
-builder.Services.AddScoped<ITeamService, TeamService>();
-builder.Services.AddScoped<ITeamMemberService, TeamMemberService>();
-
+// Add os Services
 builder.Services.AddServices();
+// Add o Mapping
 builder.Services.AddMapping();
 
 var app = builder.Build();
