@@ -29,6 +29,19 @@ source /home/thenowrock/RiderProjects/TeamsApi/Scripts/04_Tab_TeamMembers.sql
 ## Insertar datos
 ```
 source /home/thenowrock/RiderProjects/TeamsApi/Scripts/05_Ins_Teams.sql
+source /home/thenowrock/RiderProjects/TeamsApi/Scripts/06_Ins_TeamMembers.sql                                 
+```                                                                         
+
+## Delete datos
+```
+-- Eliminar la tabla TeamMembers
+DROP TABLE IF EXISTS TeamMembers;
+
+-- Eliminar la tabla Teams
+DROP TABLE IF EXISTS Teams;
+
+-- Eliminar la base de datos
+DROP DATABASE IF EXISTS teamsdb;
 ```
 
 

@@ -7,6 +7,10 @@ public class TeamMemberValidator : AbstractValidator<TeamMemberDto>
 {
     public TeamMemberValidator()
     {
+        RuleFor(m => m.Id)
+            .NotEmpty()
+            .WithMessage("The Id is required.");
+
         RuleFor(m => m.FirstName)
             .NotEmpty()
             .MaximumLength(50) // Maximum length of 50 characters
@@ -22,10 +26,19 @@ public class TeamMemberValidator : AbstractValidator<TeamMemberDto>
             .Must(BeValidDate) // Custom validation function to check valid date
             .WithMessage("BirthDate must be a valid date.");
 
+        RuleFor(m => m.Position)
+            .NotEmpty()
+            .MaximumLength(20) // Maximum length of 20 characters
+            .WithMessage("Position must be a valid string with a maximum length of 20 characters.");
+
         RuleFor(m => m.Phone)
             .NotEmpty()
             .Must(BeValidPhoneNumber) // Custom validation function to check valid phone number
             .WithMessage("Phone must be a valid phone number.");
+
+        RuleFor(m => m.TeamId)
+            .NotEmpty()
+            .WithMessage("The TeamId is required.");
     }
 
     private bool BeValidDate(DateTime date)
@@ -35,14 +48,14 @@ public class TeamMemberValidator : AbstractValidator<TeamMemberDto>
         return date < DateTime.Now;
     }
 
-    private bool BeValidPhoneNumber(string phone)
+    private static bool BeValidPhoneNumber(string phone)
     {
         // Add custom logic to validate the phone number, e.g., it should match a specific format.
         // Return true if valid, false if not.
         return IsValidPhoneNumberFormat(phone);
     }
 
-    private bool IsValidPhoneNumberFormat(string phone)
+    private static bool IsValidPhoneNumberFormat(string phone)
     {
         // Add logic to check if the phone number matches a valid format.
         // Return true if it matches the format, false if not.
