@@ -21,3 +21,9 @@ D
 Models/Team.cs,c/f/cfbddee8a82584f3d7616607eb50725858c8f062
 H
 Services/ITeamService.cs,4/0/40805c11d5a8a24d29a0dbef948d3a8c21ef21d0
+Q
+!Middleware/ExceptionMiddleware.cs,f/3/f3c5c0be16837f2af3f70010a35e9af200f00936
+J
+Middleware/ErrorDetails.cs,5/f/5fdc84cb36a84ad0ff3973661ad1645da1d0ff2d
+G
+Services/TeamService.cs,d/8/d825e1ae5b03b301e712d2b0333128829eea3704
