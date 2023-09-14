@@ -2,6 +2,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using TeamsApi.Context;
 using TeamsApi.Extensions;
+using TeamsApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +31,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+// Add Exception Middleware
+app.ConfigureExceptionHandler();
 
 app.UseHttpsRedirection();
 

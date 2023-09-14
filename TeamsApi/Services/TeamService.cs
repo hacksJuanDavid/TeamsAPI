@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TeamsApi.Context;
+using TeamsApi.Exceptions;
 using TeamsApi.Models;
 
 namespace TeamsApi.Services
@@ -13,26 +14,6 @@ namespace TeamsApi.Services
             _appDbContext = appDbContext;
         }
 
-        public async Task<Team> CreateTeam(Team team)
-        {
-            _appDbContext.Set<Team>().Add(team);
-            await _appDbContext.SaveChangesAsync();
-            return team;
-        }
-
-        public async Task DeleteTeam(int id)
-        {
-            var original = await _appDbContext.Set<Team>().FindAsync(id);
-
-            if (original is null)
-            {
-                throw new ArgumentNullException($"Team with Id={id} Not Found");
-            }
-
-            _appDbContext.Set<Team>().Remove(original);
-            await _appDbContext.SaveChangesAsync();
-        }
-
         public async Task<List<Team>> GetAllTeams()
         {
             return await _appDbContext.Set<Team>().ToListAsync();
@@ -43,33 +24,86 @@ namespace TeamsApi.Services
             return await _appDbContext.Set<Team>().FindAsync(id);
         }
 
+        public async Task<Team> CreateTeam(Team team)
+        {
+            _appDbContext.Set<Team>().Add(team);
+            await _appDbContext.SaveChangesAsync();
+            return team;
+        }
+
         public async Task<Team?> UpdateTeam(Team? team)
         {
             var id = team?.Id;
             var original = await _appDbContext.Set<Team>().FindAsync(id);
 
+            // Check if team exists
             if (original is null)
             {
-                throw new ArgumentNullException($"Team with Id={id} Not Found");
+                throw new NotFoundException($"Team with Id={id} Not Found");
             }
 
+            // Check if team name is unique
             if (team is null)
             {
-                throw new ArgumentNullException($"Team with Id={id} Not Found");
+                throw new NotFoundException($"Team with Id={id} Not Found");
             }
 
+            // Check if team name is unique
             _appDbContext.Entry(original).CurrentValues.SetValues(team);
+            // Save changes
             await _appDbContext.SaveChangesAsync();
 
             return team;
         }
 
+        public async Task DeleteTeam(int id)
+        {
+            var original = await _appDbContext.Set<Team>().FindAsync(id);
+
+            // Check if team exists
+            if (original is null)
+            {
+                throw new NotFoundException($"Team with Id={id} Not Found");
+            }
+
+            // Delete team members first
+            var teamMembers = await _appDbContext.Set<TeamMember>()
+                .Where(tm => tm.TeamId == id)
+                .ToListAsync();
+
+            _appDbContext.Set<TeamMember>().RemoveRange(teamMembers);
+
+            // Delete team
+            _appDbContext.Set<Team>().Remove(original);
+
+            // Save changes
+            await _appDbContext.SaveChangesAsync();
+        }
+
         // Get /teams/{teamId}/members
         public async Task<List<TeamMember>> GetTeamMembersByTeamId(int id)
         {
-            return await _appDbContext.Set<TeamMember>()
+            // Get team
+            var team = await _appDbContext.Set<Team>().FindAsync(id);
+
+            // Check if team exists
+            if (team is null)
+            {
+                throw new NotFoundException($"Team with id {id} does not exist");
+            }
+
+            // Get team members
+            var teamMembers = await _appDbContext.Set<TeamMember>()
                 .Where(tm => tm.TeamId == id)
                 .ToListAsync();
+
+            // Check if team has members
+            if (teamMembers.Count == 0)
+            {
+                throw new NotFoundException($"Team with id {id} exists, but it has no members assigned");
+            }
+
+            return teamMembers;
         }
     }
 }

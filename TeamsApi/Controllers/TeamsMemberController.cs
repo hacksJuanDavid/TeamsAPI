@@ -1,6 +1,8 @@
 using AutoMapper;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using TeamsApi.Dtos;
+using TeamsApi.Exceptions;
 using TeamsApi.Models;
 using TeamsApi.Services;
 
@@ -12,11 +14,14 @@ namespace TeamsApi.Controllers
     {
         private readonly ITeamMemberService _teamMemberService;
         private readonly IMapper _mapper;
+        private readonly IValidator<TeamMemberDto> _teamMemberValidator;
 
-        public TeamsMemberController(ITeamMemberService teamMemberService, IMapper mapper)
+        public TeamsMemberController(ITeamMemberService teamMemberService, IMapper mapper,
+            IValidator<TeamMemberDto> teamMemberValidator)
         {
             _teamMemberService = teamMemberService;
             _mapper = mapper;
+            _teamMemberValidator = teamMemberValidator;
         }
 
         // GET: api/<TeamsMemberController>
@@ -33,9 +38,10 @@ namespace TeamsApi.Controllers
         {
             var teamMember = await _teamMemberService.GetTeamMemberById(id);
 
+            // Check if team member exists
             if (teamMember == null)
             {
-                return NotFound();
+                throw new NotFoundException($"Team with id {id} does not exist");
             }
 
             return Ok(_mapper.Map<TeamMember, TeamMemberDto>(teamMember));
@@ -45,14 +51,55 @@ namespace TeamsApi.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] TeamMemberDto teamMember)
         {
-            return Ok(await _teamMemberService.CreateTeamMember(_mapper.Map<TeamMemberDto, TeamMember>(teamMember)));
+            try
+            {
+                // Validate TeamMemberDto
+                var validationResult = await _teamMemberValidator.ValidateAsync(teamMember);
+                if (!validationResult.IsValid)
+                {
+                    var errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+                    return BadRequest(new { Erros = errors });
+                }
+
+                return Ok(await _teamMemberService.CreateTeamMember(
+                    _mapper.Map<TeamMemberDto, TeamMember>(teamMember)));
+            }
+            catch (Exception ex)
+            {
+                // Handle FluentValidation ValidationException
+                return BadRequest(new { Errors = new List<string> { ex.Message } });
+            }
         }
 
         // PUT api/<TeamsMemberController>/5
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] TeamMemberDto teamMember)
         {
-            return Ok(await _teamMemberService.UpdateTeamMember(_mapper.Map<TeamMemberDto, TeamMember>(teamMember)));
+            try
+            {
+                // Validate TeamMemberDto
+                var validationResult = await _teamMemberValidator.ValidateAsync(teamMember);
+                if (!validationResult.IsValid)
+                {
+                    var errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+                    return BadRequest(new { Errors = errors });
+                }
+                
+                // Check if team member exists
+                var existingTeamMember = await _teamMemberService.GetTeamMemberById(id);
+                if (existingTeamMember == null)
+                {
+                    throw new NotFoundException($"Team member with id {id} does not exist");
+                }
+                
+                return Ok(await _teamMemberService.UpdateTeamMember(
+                    _mapper.Map<TeamMemberDto, TeamMember>(teamMember)));
+            }
+            catch (Exception ex)
+            {
+                // Handle FluentValidation ValidationException
+                return BadRequest(new { Errors = new List<string> { ex.Message } });
+            }
         }
 
         // DELETE api/<TeamsMemberController>/5
@@ -60,7 +107,7 @@ namespace TeamsApi.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             await _teamMemberService.DeleteTeamMember(id);
-            return Ok();
+            return Ok( new { Message = $"Team member with id {id} has been deleted." });
         }
 
         // Get /members/{id}/teams
