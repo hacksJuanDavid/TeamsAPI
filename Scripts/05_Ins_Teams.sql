@@ -1,18 +1,34 @@
 -- Insertar datos en la tabla "Teams"
-INSERT INTO `Teams` (`Name`, `Coach`)
-VALUES
-    ('Equipo 1', 'Entrenador 1'),
-    ('Equipo 2', 'Entrenador 2'),
-    ('Equipo 3', 'Entrenador 3');
+INSERT INTO `Teams` (Name, Coach, Conference) 
+VALUES 
+  ('Atlanta Hawks', 'Nate McMillan', 'East'),
+  ('Boston Celtics', 'Ime Udoka', 'East'),
+  ('Brooklyn Nets', 'Steve Nash', 'East'),
+  ('Charlotte Hornets', 'James Borrego', 'East'),
+  ('Chicago Bulls', 'Billy Donovan', 'East'),
+  ('Cleveland Cavaliers', 'J. Bickerstaff', 'East'),
+  ('Detroit Pistons', 'Dwane Casey', 'East'),
+  ('Indiana Pacers', 'Rick Carlisle', 'East'),
+  ('Miami Heat', 'Erik Spoelstra', 'East'),
+  ('Milwaukee Bucks', 'Mike Budenholzer', 'East'),
+  ('New York Knicks', 'Tom Thibodeau', 'East'),
+  ('Orlando Magic', 'Jamahl Mosley', 'East'),
+  ('Philadelphia 76ers', 'Doc Rivers', 'East'),
+  ('Toronto Raptors', 'Nick Nurse', 'East'),
+  ('Washington Wizards', 'Wes Unseld Jr.', 'East'),
+  ('Dallas Mavericks', 'Jason Kidd', 'West'),
+  ('Denver Nuggets', 'Michael Malone', 'West'),
+  ('Golden State Warriors', 'Steve Kerr', 'West'),
+  ('Houston Rockets', 'Stephen Silas', 'West'),
+  ('Los Angeles Clippers', 'Tyronn Lue', 'West'),
+  ('Los Angeles Lakers', 'Darvin Ham', 'West'),
+  ('Memphis Grizzlies', 'Taylor Jenkins', 'West'),
+  ('Minnesota Timberwolves', 'Chris Finch', 'West'),
+  ('Oklahoma City Thunder', 'Mark Daigneault', 'West'),
+  ('Phoenix Suns', 'Monty Williams', 'West'),
+  ('Sacramento Kings', 'Mike Brown', 'West'),
+  ('San Antonio Spurs', 'Gregg Popovich', 'West'),
+  ('Utah Jazz', 'Quin Snyder', 'West');
 
--- Insertar datos en la tabla "TeamMembers"
-INSERT INTO `TeamMembers` (`TeamId`, `FirstName`, `LastName`, `BirthDate`, `Phone`)
-VALUES
-    (1, 'Juan', 'Pérez', '1990-05-15 00:00:00', '123-456-7890'),
-    (1, 'María', 'González', '1992-08-20 00:00:00', '987-654-3210'),
-    (2, 'Pedro', 'Sánchez', '1988-03-10 00:00:00', '555-123-4567'),
-    (2, 'Ana', 'López', '1994-12-05 00:00:00', '777-888-9999'),
-    (3, 'Luis', 'Martínez', '1991-07-25 00:00:00', '111-222-3333'),
-    (3, 'Elena', 'Ramírez', '1993-02-18 00:00:00', '444-555-6666');
 
--- Puedes agregar más filas de datos de la misma manera
+
